@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Prank</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 50px;
+    background: #ffecec;
+    transition: background 0.5s ease;
+  }
+  h1 {
+    font-size: 2.2rem;
+    color: #c0392b;
+    animation: fadeIn 1s ease-out;
+  }
+  button {
+    font-size: 1.3rem;
+    padding: 12px 30px;
+    margin: 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  #yesBtn {
+    background: #ff6b6b;
+    position: relative;
+  }
+  #yesBtn:hover {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  #noBtn {
+    background: #6bb9ff;
+  }
+  #noBtn:active {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px #6bb9ff;
+  }
+  #messages {
+    margin-top: 30px;
+    font-size: 1.3rem;
+    color: #2c3e50;
+    min-height: 120px;
+    text-align: center;
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Will you be my Valentine?</h1>
+<button id="yesBtn">YES</button>
+<button id="noBtn">NO</button>
+
+<div id="messages"></div>
+
+<audio id="saxSound" src="sax.mp3"></audio>
+<audio id="sadSound" src="sad.mp3"></audio>
+
+<script>
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const messages = document.getElementById("messages");
+const sax = document.getElementById("saxSound");
+const sad = document.getElementById("sadSound");
+let yesCount = 0;
+
+// Utility: typewriter effect
+function typeMessage(text, delay = 50, callback) {
+  let i = 0;
+  messages.innerHTML = "";
+  const interval = setInterval(() => {
+    messages.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) {
+      clearInterval(interval);
+      if (callback) callback();
+    }
+  }, delay);
+}
+
+// Flash background colors
+function flashBackground(color, duration = 500) {
+  const original = document.body.style.background;
+  document.body.style.background = color;
+  setTimeout(() => {
+    document.body.style.background = original;
+  }, duration);
+}
+
+// YES button logic
+yesBtn.addEventListener("click", () => {
+  yesCount++;
+  sax.currentTime = 0;
+  sax.play();
+  
+  if (yesCount === 1) {
+    typeMessage("Really 👉🏿👈🏿🥺 are you sure?");
+  } else {
+    typeMessage("I know you don’t mean it but yayayay 🥰🥰🥰🤭");
+  }
+});
+
+// YES button dodges
+yesBtn.addEventListener("mouseover", () => {
+  const x = Math.random() * (window.innerWidth - yesBtn.clientWidth);
+  const y = Math.random() * (window.innerHeight - yesBtn.clientHeight);
+  yesBtn.style.transform = `translate(${x}px, ${y}px)`;
+});
+
+// NO button logic with cinematic backgrounds
+noBtn.addEventListener("click", () => {
+  sax.currentTime = 0;
+  sax.play();
+  flashBackground("gold", 1200); // gold flash for congratulations
+  typeMessage("🎉 Congratulations, you are my Valentine 👉🏿👈🏿", 50, () => {
+    
+    setTimeout(() => {
+      typeMessage("nah… I know you hate me 😓😓 it was just a prank", 50, () => {
+        
+        setTimeout(() => {
+          sad.currentTime = 0;
+          sad.play();
+          document.body.style.background = "#a0c4ff"; // blue-ish sad background
+          typeMessage("ngl… you made Abdullah sad 🥺🥺😓😢", 50, () => {
+            setTimeout(() => {
+              document.body.style.background = "#ffecec"; // reset background
+            }, 1000);
+          });
+          
+        }, 500);
+      });
+    }, 1200);
+  });
+
+  // reset YES count and button position for next victim
+  setTimeout(() => {
+    yesCount = 0;
+    messages.innerHTML = "";
+    yesBtn.style.transform = "translate(0,0)";
+  }, 7000);
+});
+</script>
+
+</body>
+</html>
