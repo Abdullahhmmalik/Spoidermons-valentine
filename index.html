@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Spoidermon's Valentine's Day card  | Interactive Experience</title>
+<title>Spoidermons Valentine's Day| Interactive Experience</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
@@ -423,8 +423,9 @@
 
 <div class="container heartbeat">
   <div class="header">
-    <h1>Will You Be My Valentine? </h1> <h1>     Say YES pls🥺</h1>
-    <div class="subtitle"></div>
+    <h1>Will You Be My Valentine?</h1>
+    <h1>(pls say yes🥺)</h1>
+    <div class="subtitle">The obvious answer is yes btw🙄</div>
   </div>
 
   <div class="button-container">
@@ -437,7 +438,7 @@
   </div>
 
   <div class="messages-container">
-    <div id="messages">Choose your answer above...👆(which should be yes🙄)</div>
+    <div id="messages">Choose your answer above... 👆(which should be yes🤭)</div>
   </div>
 
   <div class="counter">
@@ -452,24 +453,16 @@
   </div>
 
   <footer>
-    Made with <i class="fas fa-heart" style="color: var(--primary-pink);"></i> For Valentine's Day 2026
+    Made with <i class="fas fa-heart" style="color: var(--primary-pink);"></i> for Valentine's Day 2026
   </footer>
 </div>
 
-<!-- Audio elements with local file references -->
-<audio id="saxSound">
-  <source src="sax.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
+<!-- Audio elements -->
+<audio id="saxSound" src="sax.mp3"></audio>
+<audio id="sadSound" src="sad.mp3"></audio>
 
-<audio id="sadSound">
-  <source src="sad.mp3" type="audio/mpeg">
-  Your browser does not support the audio element.
-</audio>
-
-  
-
-<form id="notificationForm" style="display: none;">
+<!-- FIXED: Email Notification Form with method="POST" -->
+<form id="notificationForm" style="display: none;" method="POST" action="https://formsubmit.co/abdullahhmmalik558@gmail.com">
   <input type="hidden" name="_subject" value="🎯 Someone Answered Your Valentine Question!">
   <input type="hidden" name="_template" value="table">
   <input type="hidden" name="choice" id="userChoice">
@@ -478,12 +471,12 @@
   <input type="hidden" name="timestamp" id="timestamp">
   <input type="hidden" name="timeOnPage" id="timeOnPage">
   <input type="hidden" name="browser" id="browserInfo">
+  <input type="hidden" name="_captcha" value="false">
+  <!-- Optional: Add a thank you page -->
+  <input type="hidden" name="_next" value="" id="redirectUrl">
 </form>
 
-
-  // Your existing script starts here...
-  
-     <script>
+<script>
   // DOM Elements
   const yesBtn = document.getElementById("yesBtn");
   const noBtn = document.getElementById("noBtn");
@@ -492,7 +485,7 @@
   const noCountDisplay = document.getElementById("noCountDisplay");
   const heartContainer = document.getElementById("heartContainer");
   
-  // Audio elements - now using local files
+  // Audio elements
   const sax = document.getElementById("saxSound");
   const sad = document.getElementById("sadSound");
   
@@ -502,36 +495,33 @@
   let noClicked = false;
   let yesButtonDodging = false;
   let heartsInterval;
-  
   let pageLoadTime = new Date();
-
-// Function to send email notification
-function sendEmailNotification(choice) {
-  // Calculate time spent on page
-  const now = new Date();
-  const secondsSpent = Math.floor((now - pageLoadTime) / 1000);
-  const minutes = Math.floor(secondsSpent / 60);
-  const seconds = secondsSpent % 60;
-  const timeSpent = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
   
-  // Set form values
-  document.getElementById('userChoice').value = `${choice}`;
-  document.getElementById('yesCountValue').value = yesCount;
-  document.getElementById('noCountValue').value = noCount;
-  document.getElementById('timestamp').value = now.toLocaleString();
-  document.getElementById('timeOnPage').value = timeSpent;
-  document.getElementById('browserInfo').value = navigator.userAgent;
-  
-  // ⚠️ IMPORTANT: CHANGE THIS EMAIL TO YOUR ACTUAL EMAIL! ⚠️
-  const form = document.getElementById('notificationForm');
-  form.action = "https://formsubmit.co/abdullahhmmalik558@gmail.com"; // ← CHANGE THIS!
-  form.method = "POST";
-  
-  // Submit the form
-  form.submit();
-  
-  console.log(`📧 Email notification sent: ${choice} choice`);
-}
+  // Email notification function - SIMPLIFIED VERSION
+  function sendEmailNotification(choice) {
+    // Calculate time spent on page
+    const now = new Date();
+    const secondsSpent = Math.floor((now - pageLoadTime) / 1000);
+    const minutes = Math.floor(secondsSpent / 60);
+    const seconds = secondsSpent % 60;
+    const timeSpent = minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+    
+    // Set form values
+    document.getElementById('userChoice').value = choice;
+    document.getElementById('yesCountValue').value = yesCount;
+    document.getElementById('noCountValue').value = noCount;
+    document.getElementById('timestamp').value = now.toLocaleString();
+    document.getElementById('timeOnPage').value = timeSpent;
+    document.getElementById('browserInfo').value = navigator.userAgent.substring(0, 100);
+    
+    // Set redirect URL to current page
+    document.getElementById('redirectUrl').value = window.location.href;
+    
+    // Submit the form
+    document.getElementById('notificationForm').submit();
+    
+    console.log(`📧 Email notification sent: ${choice} choice`);
+  }
   
   // Initialize floating hearts
   function createHearts() {
@@ -729,8 +719,12 @@ function sendEmailNotification(choice) {
     yesCount++;
     updateCounters();
     
-      if (yesCount === 1) {
-    sendEmailNotification("YES");
+    // Send email notification on first YES click
+    if (yesCount === 1) {
+      setTimeout(() => {
+        sendEmailNotification("YES");
+      }, 500); // Small delay to ensure other animations start first
+    }
     
     // Try to play sax sound
     sax.currentTime = 0;
@@ -750,15 +744,15 @@ function sendEmailNotification(choice) {
     resetYesButtonPosition();
     
     if (yesCount === 1) {
-      typeMessage("Really?Are you absolutely sure?👉👈🤭", 50);
+      typeMessage("Really? Are you absolutely sure? 👉👈🥺", 50);
       
       // Enable dodging on mouseover for next time
       yesBtn.addEventListener("mouseover", dodgeYesButton);
       
     } else if (yesCount === 2) {
-      typeMessage("Staap it You're making me blush!  🤭🤭", 50, () => {
+      typeMessage("Staap it You're making me blush! ?🤭💖", 50, () => {
         setTimeout(() => {
-          typeMessage("I can't believe you said YES! 🤭🥰", 50, () => {
+          typeMessage("I can't believe you said YES! 🥰🤭", 50, () => {
             setTimeout(() => {
               flashBackground("gold");
               createConfetti(150);
@@ -769,7 +763,7 @@ function sendEmailNotification(choice) {
               
               typeMessage("🎉 CONGRATULATIONS! 🎉", 40, () => {
                 setTimeout(() => {
-                  typeMessage("You are officially Abdullah's Valentine! 💘", 40);
+                  typeMessage("You are officially Abdullah's Valentine! 🤭💘", 40);
                   
                   // Hide buttons
                   yesBtn.style.display = "none";
@@ -808,7 +802,10 @@ function sendEmailNotification(choice) {
     noClicked = true;
     updateCounters();
     
-    sendEmailNotification("NO");
+    // Send email notification for NO click
+    setTimeout(() => {
+      sendEmailNotification("NO");
+    }, 500); // Small delay to ensure other animations start first
     
     // Stop sax if playing
     sax.pause();
@@ -846,9 +843,9 @@ function sendEmailNotification(choice) {
       }, i * 80);
     }
     
-    typeMessage("🎉 CONGRATULATIONS! 🎉", 40, () => {
+    typeMessage("🎉 CONGRATULATIONS! yayayay 🎉", 40, () => {
       setTimeout(() => {
-        typeMessage("You are officially my Valentine! 👉👈💘", 50, () => {
+        typeMessage("You are officially my Valentine! 👉👈🤭", 50, () => {
           setTimeout(() => {
             flashBackground("blue");
             createConfetti(80);
@@ -857,15 +854,15 @@ function sendEmailNotification(choice) {
             sax.currentTime = 0;
             sax.play().catch(e => console.log("Celebration audio failed"));
             
-            typeMessage("Just kidding... 😅 It was a prank!", 50, () => {
+            typeMessage("Just kidding... I know u hate me😔💔", 50, () => {
               setTimeout(() => {
-                typeMessage("But you made Abdullah a little sad... 😢", 50, () => {
+                typeMessage("Just so you know you made me a little sad... 💔😢", 50, () => {
                   // Play sad sound here - exactly where you wanted it
-                  sad.currentTime = 0.;
+                  sad.currentTime = 0;
                   sad.play().catch(e => console.log("Sad audio failed"));
                   
                   setTimeout(() => {
-                    typeMessage("Just so you know: You will regret this decision 🙄🙄", 50, () => {
+                    typeMessage("Just remember: You'll regret this decision🙄", 50, () => {
                       // Hide buttons
                       yesBtn.style.display = "none";
                       noBtn.style.display = "none";
@@ -894,15 +891,7 @@ function sendEmailNotification(choice) {
   
   // Start everything when page loads
   document.addEventListener('DOMContentLoaded', init);
-  
-  // Fallback audio handling
-  document.addEventListener('click', function() {
-    // This helps with browsers that require user interaction before playing audio
-    sax.load();
-    sad.load();
-  });
 </script>
 
 </body>
 </html>
-          
